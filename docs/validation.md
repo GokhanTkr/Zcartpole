@@ -26,4 +26,4 @@ The validator assumes an initial steady-state actuator and uses the measured pre
 
 ## Optional current-loop sample
 
-The source ZIP includes a third-party Siemens current-loop CSV. `zcartpole-identify-current` accepts its original semicolon-delimited format and writes a current transfer estimate. This is **current setpoint to current feedback**, not command to cart force. See [the data note](real_current_data.md) and [attribution](data-license.md). The CSV is excluded from PyPI source and wheel distributions.
+Some separately supplied source ZIPs include a third-party Siemens current-loop CSV. `zcartpole-identify-current` accepts its original semicolon-delimited format and writes a current transfer estimate. This is **current setpoint to current feedback**, not command to cart force. See [the data note](real_current_data.md) and [attribution](data-license.md). The CSV is excluded from PyPI source and wheel distributions.

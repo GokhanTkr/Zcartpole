@@ -23,6 +23,11 @@ dependencies = [
     "scipy>=1.10",
 ]
 
+[project.urls]
+Homepage = "https://gokhantkr.github.io/Zcartpole/"
+Repository = "https://github.com/GokhanTkr/Zcartpole"
+Documentation = "https://gokhantkr.github.io/Zcartpole/"
+
 [project.scripts]
 zcartpole-run = "zcartpole.__main__:main"
 zcartpole-fit-actuator = "zcartpole.identification:main"

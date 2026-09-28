@@ -8,19 +8,19 @@ The actuator interface accepts a transfer function from drive command to horizon
 
 ## Install
 
-Python 3.9 or newer is required.
+Python 3.9 or newer is required. Download the repository ZIP from GitHub, extract it, and run this in the project folder:
 
 ```bash
-python -m pip install zcartpole
+python -m pip install -e .
 ```
 
 Swing-up uses CasADi/IPOPT; GIFs use Matplotlib and Pillow. The optional Numba backend speeds up mechanical steps after its first compilation:
 
 ```bash
-python -m pip install 'zcartpole[opt,viz,speed]'
+python -m pip install -e '.[opt,viz,speed]'
 ```
 
-In PowerShell, use `py -m pip` and quote the extra spec in the same way. You can install from this source archive with `python -m pip install -e '.[opt,viz,speed]'` from the extracted folder. Examples and the documentation site are in the source archive; a normal wheel installation contains the Python package and command line tools.
+In PowerShell, use `py -m pip` and quote the extra spec in the same way. After the PyPI release, `python -m pip install 'zcartpole[opt,viz,speed]'` will also work. Examples and the documentation site are in the repository; a normal wheel installation contains the Python package and command line tools.
 
 ## Use from Python
 

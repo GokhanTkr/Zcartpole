@@ -13,6 +13,8 @@ DATA = (Path(__file__).resolve().parents[1] / 'examples' / 'real_data' /
 
 
 def test_real_siemens_prbs_is_current_not_force():
+    if not DATA.is_file():
+        pytest.skip('Optional DaRUS measurement CSV is not in the public repository')
     t,u,y = load_siemens_current_csv(DATA)
     result,pred = identify_current_loop(t,u,y)
     assert len(t) == len(pred) == 2047

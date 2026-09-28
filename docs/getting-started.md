@@ -2,21 +2,21 @@
 
 ## 1. Install
 
-Use Python 3.9 or newer. For balance near upright, the base install is enough:
+Use Python 3.9 or newer. Download and extract the repository ZIP, then run this from its root. For balance near upright, the base install is enough:
 
 ```bash
-python -m pip install zcartpole
+python -m pip install -e .
 ```
 
 For swing-up, images, and faster mechanics, add the matching extras:
 
 ```bash
-python -m pip install 'zcartpole[opt,viz,speed]'
+python -m pip install -e '.[opt,viz,speed]'
 ```
 
 `opt` installs CasADi/IPOPT. `viz` installs Matplotlib and Pillow. `speed` installs Numba. `docs` installs MkDocs for local site previews. In Windows PowerShell, replace `python -m pip` with `py -m pip` if needed. Quote the bracket expression in both shells.
 
-If working from the project ZIP, extract it and run `python -m pip install -e '.[opt,viz,speed]'` inside its root. Example JSON files live in that ZIP, not in the installed wheel.
+After the PyPI release, `python -m pip install 'zcartpole[opt,viz,speed]'` will also work. Example JSON files live in the repository, not in the installed wheel.
 
 ## 2. Simulate in Python
 
