@@ -1,0 +1,363 @@
+{
+  "settings": {
+    "T": 6.0,
+    "N": 100,
+    "th0": [
+      3.191592653589793,
+      3.171592653589793,
+      3.161592653589793
+    ],
+    "x_max_grid": [
+      0.5
+    ],
+    "k_seed_grid": [
+      0,
+      1
+    ],
+    "w_penalty": 0.003,
+    "unit_tolerance": 0.001,
+    "alias_tolerance": 0.25,
+    "model": {
+      "m": [
+        0.1,
+        0.1,
+        0.1
+      ],
+      "l": [
+        0.4,
+        0.4,
+        0.4
+      ],
+      "u_max": 80.0
+    }
+  },
+  "interpretation": "A: one penalized call per paired physical seed. B: two IPOPT calls per seed and formulation, including a paired native seed; z terminal winding is free. Unsuccessful calls are recorded; best means best valid observed, not global optimum.",
+  "E2_A": [
+    {
+      "k": 0,
+      "x_max": 0.5,
+      "theta": {
+        "ok": true,
+        "valid": true,
+        "J": 0.15732264160288326,
+        "iter": 36,
+        "solve_s": 4.480389151000054
+      },
+      "z": {
+        "ok": false,
+        "valid": false,
+        "J": null,
+        "iter": 3000,
+        "solve_s": 116.44657136500018,
+        "validation": null,
+        "achieved_windings": null
+      }
+    },
+    {
+      "k": 1,
+      "x_max": 0.5,
+      "theta": {
+        "ok": true,
+        "valid": true,
+        "J": 0.15674416371716482,
+        "iter": 45,
+        "solve_s": 2.388929776999703
+      },
+      "z": {
+        "ok": false,
+        "valid": false,
+        "J": null,
+        "iter": 3000,
+        "solve_s": 113.60360625800013,
+        "validation": null,
+        "achieved_windings": null
+      }
+    }
+  ],
+  "E2_B": [
+    {
+      "x_max": 0.5,
+      "theta": [
+        {
+          "k": 0,
+          "seed": "k=0",
+          "stages": [
+            {
+              "penalty": 0.0,
+              "ok": true,
+              "valid": true,
+              "J": 0.012914951536551329,
+              "iter": 43,
+              "solve_s": 2.407212714999787
+            },
+            {
+              "penalty": 0.003,
+              "ok": true,
+              "valid": true,
+              "J": 0.15682059968540454,
+              "iter": 52,
+              "solve_s": 2.5880445100001452
+            }
+          ],
+          "ok": true,
+          "valid": true,
+          "J": 0.15682059968540454,
+          "achieved_windings": null,
+          "calls": 2,
+          "iterations": 95,
+          "solve_s": 4.995257224999932
+        },
+        {
+          "k": 1,
+          "seed": "k=1",
+          "stages": [
+            {
+              "penalty": 0.0,
+              "ok": true,
+              "valid": true,
+              "J": 0.01638849834997895,
+              "iter": 86,
+              "solve_s": 3.669972454999879
+            },
+            {
+              "penalty": 0.003,
+              "ok": true,
+              "valid": true,
+              "J": 0.15701066886897222,
+              "iter": 42,
+              "solve_s": 2.396003800000017
+            }
+          ],
+          "ok": true,
+          "valid": true,
+          "J": 0.15701066886897222,
+          "achieved_windings": null,
+          "calls": 2,
+          "iterations": 128,
+          "solve_s": 6.065976254999896
+        },
+        {
+          "k": 1,
+          "seed": "native",
+          "stages": [
+            {
+              "penalty": 0.0,
+              "ok": true,
+              "valid": true,
+              "J": 0.016388498295570583,
+              "iter": 80,
+              "solve_s": 3.4251293610000175
+            },
+            {
+              "penalty": 0.003,
+              "ok": true,
+              "valid": true,
+              "J": 0.1570106669629726,
+              "iter": 39,
+              "solve_s": 2.3464681840000594
+            }
+          ],
+          "ok": true,
+          "valid": true,
+          "J": 0.1570106669629726,
+          "achieved_windings": null,
+          "calls": 2,
+          "iterations": 119,
+          "solve_s": 5.771597545000077
+        }
+      ],
+      "z": [
+        {
+          "k": 0,
+          "seed": "k=0",
+          "stages": [
+            {
+              "penalty": 0.0,
+              "ok": false,
+              "valid": false,
+              "J": null,
+              "iter": 3000,
+              "solve_s": 120.27707896499987,
+              "validation": null,
+              "achieved_windings": null
+            },
+            {
+              "penalty": 0.003,
+              "ok": false,
+              "valid": false,
+              "J": null,
+              "iter": 3000,
+              "solve_s": 124.82853115099988,
+              "validation": null,
+              "achieved_windings": null
+            }
+          ],
+          "ok": false,
+          "valid": false,
+          "J": null,
+          "achieved_windings": null,
+          "calls": 2,
+          "iterations": 6000,
+          "solve_s": 245.10561011599975
+        },
+        {
+          "k": 1,
+          "seed": "k=1",
+          "stages": [
+            {
+              "penalty": 0.0,
+              "ok": false,
+              "valid": false,
+              "J": null,
+              "iter": 3000,
+              "solve_s": 121.14792731999978,
+              "validation": null,
+              "achieved_windings": null
+            },
+            {
+              "penalty": 0.003,
+              "ok": false,
+              "valid": false,
+              "J": null,
+              "iter": 3000,
+              "solve_s": 125.48723502299981,
+              "validation": null,
+              "achieved_windings": null
+            }
+          ],
+          "ok": false,
+          "valid": false,
+          "J": null,
+          "achieved_windings": null,
+          "calls": 2,
+          "iterations": 6000,
+          "solve_s": 246.6351623429996
+        },
+        {
+          "k": 1,
+          "seed": "native",
+          "stages": [
+            {
+              "penalty": 0.0,
+              "ok": true,
+              "valid": true,
+              "J": 0.01995703248656777,
+              "iter": 123,
+              "solve_s": 7.938152990000162,
+              "validation": {
+                "valid": true,
+                "unit_ok": true,
+                "alias_ok": true,
+                "unit_circle_error": 0.0003232032620367198,
+                "unit_tolerance": 0.001,
+                "alias_tolerance": 0.25,
+                "achieved_windings": [
+                  0.4925682295477686,
+                  0.4952410892098652,
+                  0.496818816293204
+                ],
+                "winding_diagnostics": [
+                  {
+                    "unwrap": 0.4920422528454053,
+                    "integral": 0.4925682295477686,
+                    "discrepancy": 0.0005259767023632622,
+                    "max_node_angle_step": 0.4868731844745293
+                  },
+                  {
+                    "unwrap": 0.4952253517072431,
+                    "integral": 0.4952410892098652,
+                    "discrepancy": 1.5737502622126254e-05,
+                    "max_node_angle_step": 0.4906298021795692
+                  },
+                  {
+                    "unwrap": 0.4968169011381622,
+                    "integral": 0.496818816293204,
+                    "discrepancy": 1.9151550418317065e-06,
+                    "max_node_angle_step": 0.5323262225046332
+                  }
+                ]
+              },
+              "achieved_windings": [
+                0.4925682295477686,
+                0.4952410892098652,
+                0.496818816293204
+              ]
+            },
+            {
+              "penalty": 0.003,
+              "ok": true,
+              "valid": true,
+              "J": 0.15825634710330005,
+              "iter": 110,
+              "solve_s": 7.687238620000244,
+              "validation": {
+                "valid": true,
+                "unit_ok": true,
+                "alias_ok": true,
+                "unit_circle_error": 9.260352880169354e-05,
+                "unit_tolerance": 0.001,
+                "alias_tolerance": 0.25,
+                "achieved_windings": [
+                  0.4910783545913852,
+                  0.4951773008493479,
+                  0.4968118801336573
+                ],
+                "winding_diagnostics": [
+                  {
+                    "unwrap": 0.4920422528454009,
+                    "integral": 0.4910783545913852,
+                    "discrepancy": 0.0009638982540156604,
+                    "max_node_angle_step": 0.37119242999692537
+                  },
+                  {
+                    "unwrap": 0.49522535170724336,
+                    "integral": 0.4951773008493479,
+                    "discrepancy": 4.8050857895443055e-05,
+                    "max_node_angle_step": 0.32932534771949573
+                  },
+                  {
+                    "unwrap": 0.49681690113820126,
+                    "integral": 0.4968118801336573,
+                    "discrepancy": 5.021004543970253e-06,
+                    "max_node_angle_step": 0.38965657052396585
+                  }
+                ]
+              },
+              "achieved_windings": [
+                0.4910783545913852,
+                0.4951773008493479,
+                0.4968118801336573
+              ]
+            }
+          ],
+          "ok": true,
+          "valid": true,
+          "J": 0.15825634710330005,
+          "achieved_windings": [
+            0.4910783545913852,
+            0.4951773008493479,
+            0.4968118801336573
+          ],
+          "calls": 2,
+          "iterations": 233,
+          "solve_s": 15.625391610000406
+        }
+      ],
+      "theta_best_seed": "k=0",
+      "z_best_seed": "native",
+      "theta_best_J": 0.15682059968540454,
+      "z_best_J": 0.15825634710330005,
+      "z_best_windings": [
+        0.4910783545913852,
+        0.4951773008493479,
+        0.4968118801336573
+      ],
+      "theta_calls": 6,
+      "z_calls": 6,
+      "theta_iterations": 342,
+      "z_iterations": 12233,
+      "theta_s": 16.832831024999905,
+      "z_s": 507.36616406899975
+    }
+  ]
+}

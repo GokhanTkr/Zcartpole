@@ -1,0 +1,264 @@
+{
+  "note": "Finite illustrative screening; no hardware guarantee",
+  "design_motor_tau_s": 0.02,
+  "design_command_delay_s": 0.01,
+  "min_cart_clearance_m": 0.005,
+  "success": true,
+  "candidates": [
+    {
+      "settings": {
+        "T": 6,
+        "cart_margin": 0.01
+      },
+      "plan_success": true,
+      "J": 0.17593965520795285,
+      "seed_k": 1,
+      "windings": [
+        1,
+        1,
+        1
+      ],
+      "selected": false,
+      "passed_screen": false,
+      "scenarios": [
+        {
+          "name": "nominal_motor_20_ms_delay_10_ms",
+          "success": true,
+          "first_rail_violation_s": null,
+          "max_cart": 0.4976927892115082,
+          "max_force": 36.906047497226076,
+          "catch": {
+            "success": true,
+            "caught": true,
+            "within_limits": true,
+            "final_cart": 0.004693436538839013,
+            "final_cart_speed": 0.001917441870368197,
+            "final_angle_error": 0.00024682505963931074,
+            "final_angular_speed": 0.0005071083130855404,
+            "max_cart": 0.4976927892115082,
+            "max_force": 36.906047497226076,
+            "peak_tracking_angle_error": 0.021635672361671323
+          }
+        },
+        {
+          "name": "motor_16_ms_delay_10_ms",
+          "success": true,
+          "first_rail_violation_s": null,
+          "max_cart": 0.4975232265972462,
+          "max_force": 37.13461074938306,
+          "catch": {
+            "success": true,
+            "caught": true,
+            "within_limits": true,
+            "final_cart": 0.006700417507544013,
+            "final_cart_speed": 0.0027460095039381766,
+            "final_angle_error": 0.0003527428927783642,
+            "final_angular_speed": 0.0007260928614854523,
+            "max_cart": 0.4975232265972462,
+            "max_force": 37.13461074938306,
+            "peak_tracking_angle_error": 0.03060267631635785
+          }
+        },
+        {
+          "name": "motor_24_ms_delay_10_ms",
+          "success": true,
+          "first_rail_violation_s": null,
+          "max_cart": 0.497868697335555,
+          "max_force": 36.697806327596815,
+          "catch": {
+            "success": true,
+            "caught": true,
+            "within_limits": true,
+            "final_cart": 0.0029097604693425956,
+            "final_cart_speed": 0.0011369706015623552,
+            "final_angle_error": 0.00016036714821633958,
+            "final_angular_speed": 0.00031914992722100805,
+            "max_cart": 0.497868697335555,
+            "max_force": 36.697806327596815,
+            "peak_tracking_angle_error": 0.023028975441802692
+          }
+        },
+        {
+          "name": "rod_mass_plus_10_percent",
+          "success": true,
+          "first_rail_violation_s": null,
+          "max_cart": 0.49625569601787506,
+          "max_force": 37.11283199727688,
+          "catch": {
+            "success": true,
+            "caught": true,
+            "within_limits": true,
+            "final_cart": 0.006137161015425771,
+            "final_cart_speed": 0.0023566469937097772,
+            "final_angle_error": 0.0003526947204608489,
+            "final_angular_speed": 0.0006954904826702301,
+            "max_cart": 0.49625569601787506,
+            "max_force": 37.11283199727688,
+            "peak_tracking_angle_error": 0.03096657617148082
+          }
+        },
+        {
+          "name": "initial_angles_plus_0.005_rad",
+          "success": true,
+          "first_rail_violation_s": null,
+          "max_cart": 0.4909759127718603,
+          "max_force": 36.90204110937083,
+          "catch": {
+            "success": true,
+            "caught": true,
+            "within_limits": true,
+            "final_cart": 0.004678558575868686,
+            "final_cart_speed": 0.0018806326530357701,
+            "final_angle_error": 0.0002508487244976907,
+            "final_angular_speed": 0.0005091509403657738,
+            "max_cart": 0.4909759127718603,
+            "max_force": 36.90204110937083,
+            "peak_tracking_angle_error": 0.021817803965423786
+          }
+        }
+      ]
+    },
+    {
+      "settings": {
+        "T": 6,
+        "cart_margin": 0.02
+      },
+      "plan_success": true,
+      "J": 0.17778999540382665,
+      "seed_k": 1,
+      "windings": [
+        1,
+        1,
+        1
+      ],
+      "selected": true,
+      "passed_screen": true,
+      "scenarios": [
+        {
+          "name": "nominal_motor_20_ms_delay_10_ms",
+          "success": true,
+          "first_rail_violation_s": null,
+          "max_cart": 0.4907546162746155,
+          "max_force": 33.090600179567595,
+          "catch": {
+            "success": true,
+            "caught": true,
+            "within_limits": true,
+            "final_cart": 0.0016795634764570988,
+            "final_cart_speed": 0.0009297564020735086,
+            "final_angle_error": 5.0227953266253246e-05,
+            "final_angular_speed": 0.00015252489935096338,
+            "max_cart": 0.4907546162746155,
+            "max_force": 33.090600179567595,
+            "peak_tracking_angle_error": 0.015935622331425314
+          }
+        },
+        {
+          "name": "motor_16_ms_delay_10_ms",
+          "success": true,
+          "first_rail_violation_s": null,
+          "max_cart": 0.49058965723635567,
+          "max_force": 33.12433719980646,
+          "catch": {
+            "success": true,
+            "caught": true,
+            "within_limits": true,
+            "final_cart": 0.004236134036307014,
+            "final_cart_speed": 0.0020027252868701595,
+            "final_angle_error": 0.00018128539427278594,
+            "final_angular_speed": 0.0004273719524143377,
+            "max_cart": 0.49058965723635567,
+            "max_force": 33.12433719980646,
+            "peak_tracking_angle_error": 0.017430046461891526
+          }
+        },
+        {
+          "name": "motor_24_ms_delay_10_ms",
+          "success": true,
+          "first_rail_violation_s": null,
+          "max_cart": 0.4909279499365411,
+          "max_force": 33.00710755781661,
+          "catch": {
+            "success": true,
+            "caught": true,
+            "within_limits": true,
+            "final_cart": 0.00026904571948700425,
+            "final_cart_speed": 1.8839828799614073e-05,
+            "final_angle_error": 3.421756713285564e-05,
+            "final_angular_speed": 4.428553786969414e-05,
+            "max_cart": 0.4909279499365411,
+            "max_force": 33.00710755781661,
+            "peak_tracking_angle_error": 0.018773646131575925
+          }
+        },
+        {
+          "name": "rod_mass_plus_10_percent",
+          "success": true,
+          "first_rail_violation_s": null,
+          "max_cart": 0.48935443744180296,
+          "max_force": 33.604693835192904,
+          "catch": {
+            "success": true,
+            "caught": true,
+            "within_limits": true,
+            "final_cart": 0.0031561239591261594,
+            "final_cart_speed": 0.0013697662495700275,
+            "final_angle_error": 0.00015643833317732314,
+            "final_angular_speed": 0.0003384694442021333,
+            "max_cart": 0.48935443744180296,
+            "max_force": 33.604693835192904,
+            "peak_tracking_angle_error": 0.01714846469484879
+          }
+        },
+        {
+          "name": "initial_angles_plus_0.005_rad",
+          "success": true,
+          "first_rail_violation_s": null,
+          "max_cart": 0.4839960092993883,
+          "max_force": 33.0890993352962,
+          "catch": {
+            "success": true,
+            "caught": true,
+            "within_limits": true,
+            "final_cart": 0.0016655040456544756,
+            "final_cart_speed": 0.0008934854953235916,
+            "final_angle_error": 5.4262770320104304e-05,
+            "final_angular_speed": 0.00015463173575754443,
+            "max_cart": 0.4839960092993883,
+            "max_force": 33.0890993352962,
+            "peak_tracking_angle_error": 0.016320280367442486
+          }
+        }
+      ]
+    }
+  ],
+  "stress_cases_not_in_selection": [
+    {
+      "name": "motor_20_ms_delay_20_ms",
+      "success": true,
+      "first_rail_violation_s": null,
+      "max_cart": 0.4948226517731143,
+      "max_force": 33.08911799874056,
+      "catch": {
+        "success": true,
+        "caught": true,
+        "within_limits": true,
+        "final_cart": 0.0016833683708074934,
+        "final_cart_speed": 0.000945579485032084,
+        "final_angle_error": 4.8196558417937485e-05,
+        "final_angular_speed": 0.00015124126086746756,
+        "max_cart": 0.4948226517731143,
+        "max_force": 33.08911799874056,
+        "peak_tracking_angle_error": 0.015713846199477466
+      }
+    },
+    {
+      "name": "all_masses_plus_20_percent",
+      "success": false,
+      "first_rail_violation_s": 2.566,
+      "max_cart": 0.5002651885297921,
+      "max_force": 41.84147732646026,
+      "catch": null
+    }
+  ]
+}

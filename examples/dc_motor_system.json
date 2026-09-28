@@ -1,0 +1,94 @@
+{
+  "schema_version": 1,
+  "name": "illustrative_dc_motor_three_link",
+  "gravity_m_s2": 9.81,
+  "rail": {
+    "half_travel_m": 0.5
+  },
+  "cart": {
+    "mass_kg": 1.0,
+    "viscous_friction_ns_m": 0.15,
+    "coulomb_friction_n": 0.0,
+    "coulomb_smoothing_speed_m_s": 0.01
+  },
+  "links": [
+    {
+      "length_m": 0.4,
+      "tip_mass_kg": 0.1,
+      "rod_mass_kg": 0.05,
+      "joint_damping_nms_rad": 0.005
+    },
+    {
+      "length_m": 0.4,
+      "tip_mass_kg": 0.1,
+      "rod_mass_kg": 0.05,
+      "joint_damping_nms_rad": 0.005
+    },
+    {
+      "length_m": 0.4,
+      "tip_mass_kg": 0.1,
+      "rod_mass_kg": 0.05,
+      "joint_damping_nms_rad": 0.005
+    }
+  ],
+  "motor": {
+    "type": "dc",
+    "resistance_ohm": 0.3,
+    "inductance_h": 0.016,
+    "torque_constant_nm_a": 0.02,
+    "back_emf_constant_vs_rad": 0.02,
+    "gear_ratio": 10.0,
+    "wheel_radius_m": 0.08,
+    "efficiency": 0.8,
+    "voltage_limit_v": 12.0,
+    "current_limit_a": 40.0,
+    "current_loop_gain_ohm": 0.5,
+    "rotor_inertia_kg_m2": 1e-06,
+    "command_delay_s": 0.01
+  },
+  "initial": {
+    "cart_position_m": 0.0,
+    "cart_velocity_m_s": 0.0,
+    "angles_rad": [
+      3.191592653589793,
+      3.171592653589793,
+      3.161592653589793
+    ],
+    "angular_velocities_rad_s": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "motor_current_a": 0.0
+  },
+  "simulation": {
+    "mode": "swingup",
+    "dt_s": 0.002,
+    "plan_duration_s": 6.0,
+    "plan_nodes": 100,
+    "catch_extra_s": 3.0,
+    "cart_margin_m": 0.02,
+    "seeds": [
+      0,
+      1
+    ],
+    "predict_delay": true,
+    "animation": true
+  },
+  "lqr": {
+    "position_weight": 10.0,
+    "angle_weights": [
+      300.0,
+      300.0,
+      300.0
+    ],
+    "cart_velocity_weight": 1.0,
+    "angular_velocity_weights": [
+      10.0,
+      10.0,
+      10.0
+    ],
+    "force_weight": 0.1,
+    "actuator_force_weight": 0.1
+  }
+}

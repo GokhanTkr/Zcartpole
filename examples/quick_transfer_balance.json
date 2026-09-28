@@ -1,0 +1,41 @@
+{
+  "schema_version": 1,
+  "name": "illustrative_one_link_transfer_balance",
+  "gravity_m_s2": 9.81,
+  "rail": {"half_travel_m": 0.5},
+  "cart": {
+    "mass_kg": 1.0,
+    "viscous_friction_ns_m": 0.15,
+    "coulomb_friction_n": 0.0
+  },
+  "links": [
+    {"length_m": 0.4, "tip_mass_kg": 0.1, "rod_mass_kg": 0.05,
+     "joint_damping_nms_rad": 0.005}
+  ],
+  "motor": {
+    "type": "transfer_function",
+    "command_to_force": {
+      "numerator": [20.0],
+      "denominator": [0.05, 1.0]
+    },
+    "command_unit": "V",
+    "command_min": -4.0,
+    "command_max": 4.0,
+    "force_limit_n": 80.0,
+    "command_delay_s": 0.01,
+    "tracking_horizon_s": 0.002
+  },
+  "initial": {
+    "cart_position_m": 0.0,
+    "cart_velocity_m_s": 0.0,
+    "angles_rad": [0.05],
+    "angular_velocities_rad_s": [0.0]
+  },
+  "simulation": {
+    "mode": "balance",
+    "dt_s": 0.002,
+    "duration_s": 3.0,
+    "predict_delay": true,
+    "animation": false
+  }
+}

@@ -1,0 +1,88 @@
+{
+  "schema_version": 1,
+  "name": "illustrative_full_drive_transfer",
+  "gravity_m_s2": 9.81,
+  "rail": {
+    "half_travel_m": 0.5
+  },
+  "cart": {
+    "mass_kg": 1.0,
+    "viscous_friction_ns_m": 0.15,
+    "coulomb_friction_n": 0.0,
+    "coulomb_smoothing_speed_m_s": 0.01
+  },
+  "links": [
+    {
+      "length_m": 0.4,
+      "tip_mass_kg": 0.1,
+      "rod_mass_kg": 0.05,
+      "joint_damping_nms_rad": 0.005
+    },
+    {
+      "length_m": 0.4,
+      "tip_mass_kg": 0.1,
+      "rod_mass_kg": 0.05,
+      "joint_damping_nms_rad": 0.005
+    },
+    {
+      "length_m": 0.4,
+      "tip_mass_kg": 0.1,
+      "rod_mass_kg": 0.05,
+      "joint_damping_nms_rad": 0.005
+    }
+  ],
+  "motor": {
+    "type": "transfer_function",
+    "command_to_force": {
+      "numerator": [
+        1.0
+      ],
+      "denominator": [
+        0.02,
+        1.0
+      ]
+    },
+    "velocity_to_force": {
+      "numerator": [
+        0.0
+      ],
+      "denominator": [
+        1.0
+      ]
+    },
+    "command_unit": "N",
+    "command_min": -80.0,
+    "command_max": 80.0,
+    "force_limit_n": 80.0,
+    "command_delay_s": 0.01,
+    "tracking_horizon_s": 0.002
+  },
+  "initial": {
+    "cart_position_m": 0.0,
+    "cart_velocity_m_s": 0.0,
+    "angles_rad": [
+      3.191592653589793,
+      3.171592653589793,
+      3.161592653589793
+    ],
+    "angular_velocities_rad_s": [
+      0.0,
+      0.0,
+      0.0
+    ]
+  },
+  "simulation": {
+    "mode": "swingup",
+    "dt_s": 0.002,
+    "plan_duration_s": 6.0,
+    "plan_nodes": 100,
+    "catch_extra_s": 3.0,
+    "cart_margin_m": 0.02,
+    "seeds": [
+      0,
+      1
+    ],
+    "predict_delay": true,
+    "animation": false
+  }
+}

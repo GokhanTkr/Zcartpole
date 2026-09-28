@@ -1,0 +1,85 @@
+{
+  "note": "Illustrative fixed scenarios, not Monte Carlo or hardware data",
+  "plan_J": 0.17593965520795285,
+  "nominal_bound": 0.5,
+  "scenarios": [
+    {
+      "name": "nominal",
+      "completed": true,
+      "first_rail_violation_s": null,
+      "max_cart": 0.4912803772844968,
+      "max_force": 36.0872813048879,
+      "catch": {
+        "success": true,
+        "caught": true,
+        "within_limits": true,
+        "final_cart": 0.0040724821729757,
+        "final_cart_speed": 0.0014871779004463849,
+        "final_angle_error": 0.00024593803547241707,
+        "final_angular_speed": 0.00046955284397160114,
+        "max_cart": 0.4912803772844968,
+        "max_force": 36.0872813048879,
+        "peak_tracking_angle_error": 0.024692425191878732
+      }
+    },
+    {
+      "name": "initial_angles_plus_0.05_rad",
+      "completed": false,
+      "first_rail_violation_s": 0.928,
+      "max_cart": 0.5001682802385101,
+      "max_force": 5.153478750255848,
+      "catch": null
+    },
+    {
+      "name": "rod_masses_plus_20_percent",
+      "completed": true,
+      "first_rail_violation_s": null,
+      "max_cart": 0.4905321696285356,
+      "max_force": 36.915122946150376,
+      "catch": {
+        "success": true,
+        "caught": true,
+        "within_limits": true,
+        "final_cart": 0.00472921379793646,
+        "final_cart_speed": 0.0017071610598380035,
+        "final_angle_error": 0.0002905605249146709,
+        "final_angular_speed": 0.0005522875844073704,
+        "max_cart": 0.4905321696285356,
+        "max_force": 36.915122946150376,
+        "peak_tracking_angle_error": 0.03551110849548309
+      }
+    },
+    {
+      "name": "all_masses_plus_20_percent",
+      "completed": false,
+      "first_rail_violation_s": 2.58,
+      "max_cart": 0.5012308114831704,
+      "max_force": 41.36558068757461,
+      "catch": null
+    },
+    {
+      "name": "link_lengths_plus_10_percent",
+      "completed": false,
+      "first_rail_violation_s": 2.498,
+      "max_cart": 0.501233880374575,
+      "max_force": 47.282969887101025,
+      "catch": null
+    },
+    {
+      "name": "viscous_damping_times_3",
+      "completed": false,
+      "first_rail_violation_s": 2.062,
+      "max_cart": 0.5002254024475312,
+      "max_force": 13.47325517078494,
+      "catch": null
+    },
+    {
+      "name": "command_delay_20_ms",
+      "completed": false,
+      "first_rail_violation_s": 2.718,
+      "max_cart": 0.5021946606738362,
+      "max_force": 80.0,
+      "catch": null
+    }
+  ]
+}

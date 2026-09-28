@@ -1,0 +1,137 @@
+{
+  "settings": {
+    "T": 6.0,
+    "N": 100,
+    "x_max": 0.5,
+    "th0": [
+      3.191592653589793,
+      3.171592653589793,
+      3.161592653589793
+    ],
+    "w_penalty": 0.003,
+    "model": {
+      "m": [
+        0.1,
+        0.1,
+        0.1
+      ],
+      "l": [
+        0.4,
+        0.4,
+        0.4
+      ],
+      "u_max": 80.0
+    },
+    "starting_path": "native z and its identical physical phase lift",
+    "calls_per_formulation": 2
+  },
+  "phase": {
+    "stages": [
+      {
+        "penalty": 0.0,
+        "ok": true,
+        "J": 0.01638849831494493,
+        "iterations": 98,
+        "seconds": 6.379118083999856
+      },
+      {
+        "penalty": 0.003,
+        "ok": true,
+        "J": 0.15701067496743076,
+        "iterations": 41,
+        "seconds": 2.5103300909995596
+      }
+    ],
+    "terminal_turns": [
+      1.0,
+      1.0,
+      1.0
+    ],
+    "valid": true
+  },
+  "z": {
+    "stages": [
+      {
+        "penalty": 0.0,
+        "ok": true,
+        "J": 0.01995703248656777,
+        "iterations": 123,
+        "seconds": 7.783851002999654,
+        "validation": {
+          "valid": true,
+          "unit_ok": true,
+          "alias_ok": true,
+          "unit_circle_error": 0.0003232032620367198,
+          "unit_tolerance": 0.001,
+          "alias_tolerance": 0.25,
+          "achieved_windings": [
+            0.4925682295477686,
+            0.4952410892098652,
+            0.496818816293204
+          ],
+          "winding_diagnostics": [
+            {
+              "unwrap": 0.4920422528454053,
+              "integral": 0.4925682295477686,
+              "discrepancy": 0.0005259767023632622,
+              "max_node_angle_step": 0.4868731844745293
+            },
+            {
+              "unwrap": 0.4952253517072431,
+              "integral": 0.4952410892098652,
+              "discrepancy": 1.5737502622126254e-05,
+              "max_node_angle_step": 0.4906298021795692
+            },
+            {
+              "unwrap": 0.4968169011381622,
+              "integral": 0.496818816293204,
+              "discrepancy": 1.9151550418317065e-06,
+              "max_node_angle_step": 0.5323262225046332
+            }
+          ]
+        }
+      },
+      {
+        "penalty": 0.003,
+        "ok": true,
+        "J": 0.15825634710330005,
+        "iterations": 110,
+        "seconds": 7.574276526999711,
+        "validation": {
+          "valid": true,
+          "unit_ok": true,
+          "alias_ok": true,
+          "unit_circle_error": 9.260352880169354e-05,
+          "unit_tolerance": 0.001,
+          "alias_tolerance": 0.25,
+          "achieved_windings": [
+            0.4910783545913852,
+            0.4951773008493479,
+            0.4968118801336573
+          ],
+          "winding_diagnostics": [
+            {
+              "unwrap": 0.4920422528454009,
+              "integral": 0.4910783545913852,
+              "discrepancy": 0.0009638982540156604,
+              "max_node_angle_step": 0.37119242999692537
+            },
+            {
+              "unwrap": 0.49522535170724336,
+              "integral": 0.4951773008493479,
+              "discrepancy": 4.8050857895443055e-05,
+              "max_node_angle_step": 0.32932534771949573
+            },
+            {
+              "unwrap": 0.49681690113820126,
+              "integral": 0.4968118801336573,
+              "discrepancy": 5.021004543970253e-06,
+              "max_node_angle_step": 0.38965657052396585
+            }
+          ]
+        }
+      }
+    ],
+    "valid": true
+  }
+}

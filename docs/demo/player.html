@@ -1,0 +1,452 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>zcartpole demo</title>
+<style>
+  :root { --fg:#1f2328; --muted:#5b6470; --line:#d5dbe3; --bg:#ffffff; --panel:#f5f7fa; --accent:#3b5bdb; }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; background: var(--bg); color: var(--fg);
+    font: 14px/1.45 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+  body { padding: 10px; max-width: 820px; margin: 0 auto; }
+  button, select { font: inherit; color: inherit; }
+  .tabs { display: flex; gap: 6px; margin-bottom: 8px; }
+  .tabs button { padding: 6px 12px; border: 1px solid var(--line); background: var(--panel);
+    border-radius: 6px; cursor: pointer; }
+  .tabs button.on { background: var(--accent); border-color: var(--accent); color: #fff; }
+  canvas { display: block; width: 100%; border: 1px solid var(--line); border-radius: 8px; background: #fff; }
+  .row { display: flex; flex-wrap: wrap; gap: 8px 14px; align-items: center; margin: 8px 0; }
+  .row label { display: flex; align-items: center; gap: 6px; }
+  .btn { padding: 5px 11px; border: 1px solid var(--line); background: var(--panel);
+    border-radius: 6px; cursor: pointer; }
+  .btn:hover { border-color: var(--accent); }
+  input[type=range] { accent-color: var(--accent); }
+  .slider { display: grid; grid-template-columns: 2.2em 1fr 4.5em; gap: 8px; align-items: center; margin: 2px 0; }
+  .slider output { text-align: right; font-variant-numeric: tabular-nums; }
+  .muted { color: var(--muted); font-size: 13px; margin: 6px 0; }
+  .status { font-weight: 600; }
+  [hidden] { display: none !important; }
+</style>
+</head>
+<body>
+
+<div class="tabs">
+  <button id="tab-play" class="on" type="button">Playback</button>
+  <button id="tab-live" type="button">Live LQR</button>
+</div>
+
+<canvas id="scene"></canvas>
+
+<section id="play">
+  <div class="row">
+    <label>Trajectory <select id="traj"></select></label>
+    <button id="pp" class="btn" type="button">⏸ Pause</button>
+    <label>Speed
+      <select id="pspeed">
+        <option value="0.25">0.25×</option><option value="0.5">0.5×</option>
+        <option value="1" selected>1×</option><option value="2">2×</option>
+      </select>
+    </label>
+    <span id="ptime" class="muted"></span>
+  </div>
+  <div class="row"><input id="pseek" type="range" min="0" max="1000" step="1" value="0" style="flex:1"></div>
+  <p id="pdesc" class="muted"></p>
+</section>
+
+<section id="live" hidden>
+  <div class="row">
+    <label>Links
+      <select id="ln"><option value="2">2</option><option value="3">3</option></select>
+    </label>
+    <label><input id="lctl" type="checkbox" checked> LQR on</label>
+    <label>Speed
+      <select id="lspeed">
+        <option value="0.25">0.25×</option><option value="0.5">0.5×</option>
+        <option value="1" selected>1×</option><option value="2">2×</option>
+      </select>
+    </label>
+    <button id="lreset" class="btn" type="button">↺ Reset</button>
+  </div>
+  <div id="sliders"></div>
+  <div class="row">
+    <button id="pushL" class="btn" type="button">◀ Push cart</button>
+    <button id="pushR" class="btn" type="button">Push cart ▶</button>
+    <span class="muted" style="margin:0">(±0.5 m/s speed kick)</span>
+    <span id="lstatus" class="status"></span>
+  </div>
+  <p class="muted">
+    This mode simulates dynamics in the browser. Python provides LQR gain
+    <i>K</i> in <code>data.js</code>. LQR works near upright; large starting
+    angles may fall, especially with three links.
+  </p>
+</section>
+
+<canvas id="plots"></canvas>
+<p id="hint" class="muted" hidden></p>
+
+<script src="data.js"></script>
+<script src="zcartpole.js"></script>
+<script>
+(function () {
+  "use strict";
+  var D = window.ZC_DATA, ZC = window.ZC;
+  function $(id) { return document.getElementById(id); }
+  var COLORS = ["#c2410c", "#0f766e", "#7c3aed"];
+  var CART = "#3b5bdb";
+  var DEG = 180 / Math.PI;
+  var dpr = window.devicePixelRatio || 1;
+
+  // Canvas drawing.
+  function Surface(cv, aspect) { this.cv = cv; this.aspect = aspect; this.fit(); }
+  Surface.prototype.fit = function () {
+    var w = this.cv.clientWidth || 720, h = Math.round(w * this.aspect);
+    this.cv.style.height = h + "px";
+    this.cv.width = Math.round(w * dpr); this.cv.height = Math.round(h * dpr);
+    this.ctx = this.cv.getContext("2d");
+    this.ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    this.w = w; this.h = h;
+  };
+  var sc = new Surface($("scene"), 0.42);
+  var pl = new Surface($("plots"), 0.46);
+
+  function sum(a) { return a.reduce(function (p, q) { return p + q; }, 0); }
+
+  // Scene.
+  // view: {x, th[], l[], u, uMax, camX, xMax}
+  function drawScene(view) {
+    var ctx = sc.ctx, w = sc.w, h = sc.h;
+    ctx.clearRect(0, 0, w, h);
+    var L = sum(view.l), cy = h * 0.52, scale = (h * 0.5 - 26) / L;
+    var cartW = 0.30 * scale, cartH = 0.12 * scale;
+    var gy = cy + cartH / 2 + 7;
+    function sx(X) { return w / 2 + (X - view.camX) * scale; }
+
+    // Ground and scale.
+    ctx.strokeStyle = "#9aa4b2"; ctx.lineWidth = 1.5;
+    ctx.beginPath(); ctx.moveTo(0, gy); ctx.lineTo(w, gy); ctx.stroke();
+    ctx.fillStyle = "#7a8493"; ctx.font = "11px system-ui, sans-serif"; ctx.textAlign = "center";
+    var half = w / 2 / scale, k0 = Math.floor((view.camX - half) / 0.25), k1 = Math.ceil((view.camX + half) / 0.25);
+    for (var k = k0; k <= k1; k++) {
+      var X = k * 0.25, px0 = sx(X), major = (k % 4 === 0);
+      ctx.beginPath(); ctx.moveTo(px0, gy); ctx.lineTo(px0, gy + (major ? 8 : 4)); ctx.stroke();
+      if (major) ctx.fillText(X.toFixed(0) + " m", px0, gy + 20);
+    }
+    // Rail bounds.
+    if (view.xMax) {
+      ctx.save(); ctx.setLineDash([5, 4]); ctx.strokeStyle = "#c92a2a"; ctx.lineWidth = 1;
+      [-view.xMax, view.xMax].forEach(function (X) {
+        ctx.beginPath(); ctx.moveTo(sx(X), gy); ctx.lineTo(sx(X), cy - cartH); ctx.stroke();
+      });
+      ctx.restore();
+      ctx.fillStyle = "#c92a2a"; ctx.textAlign = "left";
+      ctx.fillText("x_max", sx(view.xMax) + 4, cy - cartH - 2);
+    }
+
+    // Cart.
+    var px = sx(view.x), py = cy;
+    ctx.fillStyle = CART;
+    ctx.fillRect(px - cartW / 2, py - cartH / 2, cartW, cartH);
+    ctx.fillStyle = "#2b2f36";
+    [-1, 1].forEach(function (s) {
+      ctx.beginPath(); ctx.arc(px + s * cartW * 0.3, py + cartH / 2 + 3, 4, 0, 2 * Math.PI); ctx.fill();
+    });
+
+    // Force arrow scaled by the force limit.
+    var alen = view.u / view.uMax * 70;
+    if (Math.abs(alen) > 2) {
+      var ay = py + cartH / 2 + 26 + 0;
+      ctx.strokeStyle = "#e8590c"; ctx.fillStyle = "#e8590c"; ctx.lineWidth = 3;
+      ctx.beginPath(); ctx.moveTo(px, ay); ctx.lineTo(px + alen, ay); ctx.stroke();
+      var d = alen > 0 ? 1 : -1;
+      ctx.beginPath(); ctx.moveTo(px + alen + 7 * d, ay); ctx.lineTo(px + alen, ay - 5); ctx.lineTo(px + alen, ay + 5);
+      ctx.closePath(); ctx.fill();
+    }
+
+    // Link chain.
+    var pts = [[px, py]];
+    for (var i = 0; i < view.th.length; i++) {
+      var q = pts[i];
+      pts.push([q[0] + view.l[i] * Math.sin(view.th[i]) * scale, q[1] - view.l[i] * Math.cos(view.th[i]) * scale]);
+    }
+    ctx.lineCap = "round";
+    for (i = 0; i < view.th.length; i++) {
+      ctx.strokeStyle = COLORS[i % COLORS.length]; ctx.lineWidth = 4;
+      ctx.beginPath(); ctx.moveTo(pts[i][0], pts[i][1]); ctx.lineTo(pts[i + 1][0], pts[i + 1][1]); ctx.stroke();
+    }
+    for (i = 0; i < view.th.length; i++) {
+      ctx.fillStyle = COLORS[i % COLORS.length];
+      ctx.beginPath(); ctx.arc(pts[i + 1][0], pts[i + 1][1], 7, 0, 2 * Math.PI); ctx.fill();
+    }
+    ctx.fillStyle = "#fff"; ctx.strokeStyle = "#2b2f36"; ctx.lineWidth = 1.5;
+    ctx.beginPath(); ctx.arc(px, py, 3.5, 0, 2 * Math.PI); ctx.fill(); ctx.stroke();
+  }
+
+  // Plots.
+  function fmt(v, span) {
+    var d = span >= 50 ? 0 : span >= 5 ? 1 : span >= 0.5 ? 2 : 3;
+    var t = v.toFixed(d);
+    return /^-0(\.0+)?$/.test(t) ? t.slice(1) : t;
+  }
+
+  // panels: [{title, unit, series:[{t[], v[], color, label}], range?}]
+  function drawPlots(panels, t0, t1, cursor) {
+    var ctx = pl.ctx, w = pl.w, h = pl.h;
+    ctx.clearRect(0, 0, w, h);
+    var ph = h / panels.length, ml = 48, mr = 10;
+    ctx.font = "11px system-ui, sans-serif";
+    panels.forEach(function (p, k) {
+      var top = k * ph + 18, bot = (k + 1) * ph - 14;
+      var lo = Infinity, hi = -Infinity;
+      if (p.range) { lo = p.range[0]; hi = p.range[1]; }
+      else p.series.forEach(function (s) {
+        for (var i = 0; i < s.v.length; i++) { if (s.v[i] < lo) lo = s.v[i]; if (s.v[i] > hi) hi = s.v[i]; }
+      });
+      if (!isFinite(lo)) { lo = -1; hi = 1; }
+      lo = Math.min(lo, 0); hi = Math.max(hi, 0);
+      var minSpan = p.minSpan || 1e-9;
+      if (hi - lo < minSpan) { var mid = (hi + lo) / 2; lo = mid - minSpan / 2; hi = mid + minSpan / 2; }
+      var pad = (hi - lo) * 0.08; lo -= pad; hi += pad;
+      var X = function (t) { return ml + (t - t0) / (t1 - t0) * (w - ml - mr); };
+      var Y = function (v) { return bot - (v - lo) / (hi - lo) * (bot - top); };
+
+      ctx.strokeStyle = "#e3e8ee"; ctx.lineWidth = 1;
+      ctx.strokeRect(ml, top, w - ml - mr, bot - top);
+      ctx.save(); ctx.setLineDash([3, 3]); ctx.strokeStyle = "#b8c0cc";
+      ctx.beginPath(); ctx.moveTo(ml, Y(0)); ctx.lineTo(w - mr, Y(0)); ctx.stroke(); ctx.restore();
+
+      ctx.fillStyle = "#5b6470"; ctx.textAlign = "right";
+      ctx.fillText(fmt(hi, hi - lo), ml - 4, top + 8);
+      ctx.fillText(fmt(lo, hi - lo), ml - 4, bot);
+      ctx.textAlign = "left";
+      ctx.fillStyle = "#1f2328";
+      ctx.fillText(p.title + " [" + p.unit + "]", ml, top - 6);
+      var lx = ml + ctx.measureText(p.title + " [" + p.unit + "]").width + 14;
+      p.series.forEach(function (s) {
+        if (!s.label) return;
+        ctx.fillStyle = s.color; ctx.fillText("● " + s.label, lx, top - 6);
+        lx += ctx.measureText("● " + s.label).width + 10;
+      });
+
+      ctx.save(); ctx.beginPath(); ctx.rect(ml, top, w - ml - mr, bot - top); ctx.clip();
+      p.series.forEach(function (s) {
+        ctx.strokeStyle = s.color; ctx.lineWidth = 1.6; ctx.beginPath();
+        var started = false;
+        for (var i = 0; i < s.t.length; i++) {
+          if (s.t[i] < t0 - 1e-9) continue;
+          var xx = X(s.t[i]), yy = Y(s.v[i]);
+          if (!started || (p.wrap && i > 0 && Math.abs(s.v[i] - s.v[i - 1]) > 180)) { ctx.moveTo(xx, yy); started = true; }
+          else ctx.lineTo(xx, yy);
+        }
+        ctx.stroke();
+      });
+      if (cursor !== null && cursor !== undefined) {
+        ctx.strokeStyle = "rgba(31,35,40,0.55)"; ctx.lineWidth = 1;
+        ctx.beginPath(); ctx.moveTo(X(cursor), top); ctx.lineTo(X(cursor), bot); ctx.stroke();
+      }
+      ctx.restore();
+
+      if (k === panels.length - 1) {
+        ctx.fillStyle = "#5b6470"; ctx.textAlign = "left"; ctx.fillText(t0.toFixed(1) + " s", ml, bot + 11);
+        ctx.textAlign = "right"; ctx.fillText(t1.toFixed(1) + " s", w - mr, bot + 11);
+      }
+    });
+  }
+
+  // Trajectory playback.
+  var pb = { traj: null, t: 0, playing: true, speed: 1, panels: null, T: 1 };
+
+  function buildPlayPanels(tr) {
+    var n = tr.n, ang = [];
+    for (var i = 0; i < n; i++) {
+      ang.push({ t: tr.t, v: tr.theta[i].map(function (a) { return a * DEG; }),
+                 color: COLORS[i], label: "θ" + (i + 1) });
+    }
+    return [
+      { title: "Angles", unit: "°", series: ang, minSpan: 2 },
+      { title: "Force u", unit: "N", series: [{ t: tr.t, v: tr.u, color: "#e8590c" }], minSpan: 2 },
+      { title: "Cart position x", unit: "m", series: [{ t: tr.t, v: tr.x, color: CART }], minSpan: 0.2 }
+    ];
+  }
+
+  function selectTraj(idx) {
+    var tr = D.trajectories[idx];
+    pb.traj = tr; pb.t = 0; pb.playing = true; pb.T = tr.t[tr.t.length - 1];
+    pb.panels = buildPlayPanels(tr);
+    pb.panels.forEach(function (p) {          // Compute the plot range once.
+      var lo = Infinity, hi = -Infinity;
+      p.series.forEach(function (s) { s.v.forEach(function (v) { if (v < lo) lo = v; if (v > hi) hi = v; }); });
+      p.range = [lo, hi];
+    });
+    $("pdesc").textContent = tr.description;
+    $("pp").textContent = "⏸ Pause";
+  }
+
+  function sample(tr, t) {
+    var f = Math.min(t / tr.dt, tr.t.length - 1), i0 = Math.floor(f), i1 = Math.min(i0 + 1, tr.t.length - 1), a = f - i0;
+    function lerp(arr) { return arr[i0] * (1 - a) + arr[i1] * a; }
+    return { x: lerp(tr.x), u: lerp(tr.u), th: tr.theta.map(lerp) };
+  }
+
+  function tickPlay(dt) {
+    var tr = pb.traj;
+    if (pb.playing) {
+      pb.t += dt * pb.speed;
+      if (pb.t >= pb.T) { pb.t = pb.T; pb.playing = false; $("pp").textContent = "↻ Replay"; }
+    }
+    var s = sample(tr, pb.t);
+    drawScene({ x: s.x, th: s.th, l: tr.model.l, u: s.u, uMax: tr.model.u_max, camX: 0, xMax: tr.x_max });
+    drawPlots(pb.panels, 0, pb.T, pb.t);
+    $("pseek").value = Math.round(pb.t / pb.T * 1000);
+    $("ptime").textContent = "t = " + pb.t.toFixed(2) + " / " + pb.T.toFixed(2) + " s · u = " + s.u.toFixed(1) + " N";
+  }
+
+  // Live LQR.
+  var H = 1e-3, WINDOW = 8;
+  var DEFAULT_DEG = { 2: [2.9, -1.7], 3: [2.9, -1.7, 1.1] };   // ≈ (0.05, -0.03, 0.02) rad
+  var lv = { mdl: null, st: null, k: 0, acc: 0, speed: 1, ctl: true, u: 0, camX: 0, dead: false, halted: false, hist: null };
+
+  function buildSliders() {
+    var n = +$("ln").value, box = $("sliders");
+    box.innerHTML = "";
+    for (var i = 0; i < n; i++) {
+      var row = document.createElement("div"); row.className = "slider";
+      var lab = document.createElement("span"); lab.textContent = "θ" + (i + 1);
+      lab.style.color = COLORS[i];
+      var inp = document.createElement("input"); inp.type = "range"; inp.min = -15; inp.max = 15; inp.step = 0.1;
+      inp.value = DEFAULT_DEG[n][i]; inp.dataset.idx = i;
+      var out = document.createElement("output"); out.textContent = (+inp.value).toFixed(1) + "°";
+      inp.addEventListener("input", (function (o) { return function (ev) {
+        o.textContent = (+ev.target.value).toFixed(1) + "°"; resetLive();
+      }; })(out));
+      row.appendChild(lab); row.appendChild(inp); row.appendChild(out); box.appendChild(row);
+    }
+  }
+
+  function resetLive() {
+    var n = +$("ln").value;
+    var th0 = Array.prototype.map.call($("sliders").querySelectorAll("input"), function (e) { return +e.value / DEG; });
+    lv.mdl = ZC.makeModel(D.models[n]);
+    lv.st = ZC.makeState(0, th0, null);
+    lv.k = 0; lv.acc = 0; lv.u = 0; lv.camX = 0; lv.dead = false; lv.halted = false;
+    lv.hist = { t: [], x: [], u: [], th: th0.map(function () { return []; }) };
+  }
+
+  function record() {
+    var h = lv.hist;
+    h.t.push(lv.k * H); h.x.push(lv.st.x); h.u.push(lv.u);
+    for (var i = 0; i < lv.mdl.n; i++) h.th[i].push(Math.atan2(lv.st.s[i], lv.st.c[i]) * DEG);
+    while (h.t.length > WINDOW * 100 + 1) { h.t.shift(); h.x.shift(); h.u.shift(); h.th.forEach(function (a) { a.shift(); }); }
+  }
+
+  function maxAngle(st) {
+    var m = 0;
+    for (var i = 0; i < st.c.length; i++) m = Math.max(m, Math.abs(Math.atan2(st.s[i], st.c[i])));
+    return m;
+  }
+
+  function liveStatus() {
+    if (lv.dead) return "Numerical divergence";
+    if (lv.halted) return "Fell: LQR could not catch it";
+    var st = lv.st, maxA = maxAngle(st), maxW = 0;
+    for (var i = 0; i < lv.mdl.n; i++) maxW = Math.max(maxW, Math.abs(st.w[i]));
+    if (maxA > Math.PI / 2) return "Fell";
+    if (maxA < 0.005 && maxW < 0.02) return "Balanced";
+    return lv.ctl ? "Catching…" : "Free (no control)";
+  }
+
+  function tickLive(dt) {
+    if (!lv.dead && !lv.halted) {
+      lv.acc += dt * lv.speed;
+      var steps = Math.min(100, Math.floor(lv.acc / H));
+      lv.acc -= steps * H;
+      for (var i = 0; i < steps; i++) {
+        lv.u = lv.ctl ? ZC.lqrControl(lv.mdl, lv.st) : 0;
+        if (lv.k % 10 === 0) record();
+        lv.st = ZC.step(lv.mdl, lv.st, lv.u, H);
+        lv.k++;
+        if (!isFinite(lv.st.x) || !isFinite(lv.st.w[0])) { lv.dead = true; break; }
+        // Stop when an active controller loses a link below horizontal.
+        if (lv.ctl && lv.k % 10 === 0 && maxAngle(lv.st) > Math.PI / 2) { lv.halted = true; break; }
+      }
+    }
+    var dx = lv.st.x - lv.camX;
+    if (Math.abs(dx) > 0.6) lv.camX = lv.st.x - 0.6 * Math.sign(dx);      // Follow fast cart motion.
+    else lv.camX += dx * Math.min(1, dt * 6);
+    var th = lv.st.c.map(function (c, i) { return Math.atan2(lv.st.s[i], c); });
+    drawScene({ x: lv.st.x, th: th, l: lv.mdl.l, u: lv.u, uMax: lv.mdl.uMax, camX: lv.camX, xMax: 0 });
+    var h = lv.hist, t1 = Math.max(WINDOW, lv.k * H), t0 = t1 - WINDOW;
+    var ang = h.th.map(function (a, i) { return { t: h.t, v: a, color: COLORS[i], label: "θ" + (i + 1) }; });
+    drawPlots([
+      { title: "Angles", unit: "°", series: ang, minSpan: 2, wrap: true },
+      { title: "Force u", unit: "N", series: [{ t: h.t, v: h.u, color: "#e8590c" }], minSpan: 2 },
+      { title: "Cart position x", unit: "m", series: [{ t: h.t, v: h.x, color: CART }], minSpan: 0.2 }
+    ], t0, t1, null);
+    $("lstatus").textContent = liveStatus();
+  }
+
+  // Modes and events.
+  var mode = "play", last = performance.now(), noSwingup = false;
+
+  function setMode(m) {
+    mode = m;
+    $("tab-play").classList.toggle("on", m === "play");
+    $("tab-live").classList.toggle("on", m === "live");
+    $("play").hidden = m !== "play"; $("live").hidden = m !== "live";
+    $("hint").hidden = m !== "play" || !noSwingup;
+    if (m === "live" && !lv.mdl) { buildSliders(); resetLive(); }
+    last = performance.now();
+  }
+
+  function frame(now) {
+    var dt = Math.min(0.05, (now - last) / 1000); last = now;
+    if (mode === "play") tickPlay(dt); else tickLive(dt);
+    requestAnimationFrame(frame);
+  }
+
+  function init() {
+    if (!D || !D.trajectories || !D.trajectories.length) {
+      document.body.innerHTML = "<p>data.js is missing or empty. Run <code>python examples/generate_trajectories.py</code>.</p>";
+      return;
+    }
+    var sel = $("traj"), pick = 0;
+    D.trajectories.forEach(function (t, i) {
+      var o = document.createElement("option"); o.value = i; o.textContent = t.title; sel.appendChild(o);
+      if (pick === 0 && /^swingup/.test(t.id)) pick = i;
+    });
+    sel.value = pick; selectTraj(pick);
+    noSwingup = !D.trajectories.some(function (t) { return /^swingup/.test(t.id); });
+    if (noSwingup) {
+      var hint = $("hint"); hint.hidden = false;
+      hint.innerHTML = "No swing-up records. With CasADi installed, run " +
+        "<code>python examples/generate_trajectories.py</code> and rebuild the site.";
+    }
+
+    sel.addEventListener("change", function () { selectTraj(+sel.value); });
+    $("pp").addEventListener("click", function () {
+      if (pb.t >= pb.T) { pb.t = 0; pb.playing = true; }
+      else pb.playing = !pb.playing;
+      $("pp").textContent = pb.playing ? "⏸ Pause" : "▶ Play";
+    });
+    $("pspeed").addEventListener("change", function (e) { pb.speed = +e.target.value; });
+    $("pseek").addEventListener("input", function (e) { pb.t = +e.target.value / 1000 * pb.T; });
+
+    $("tab-play").addEventListener("click", function () { setMode("play"); });
+    $("tab-live").addEventListener("click", function () { setMode("live"); });
+    $("ln").addEventListener("change", function () { buildSliders(); resetLive(); });
+    $("lctl").addEventListener("change", function (e) { lv.ctl = e.target.checked; });
+    $("lspeed").addEventListener("change", function (e) { lv.speed = +e.target.value; });
+    $("lreset").addEventListener("click", resetLive);
+    $("pushL").addEventListener("click", function () { if (lv.st) lv.st.v -= 0.5; });
+    $("pushR").addEventListener("click", function () { if (lv.st) lv.st.v += 0.5; });
+    window.addEventListener("resize", function () { sc.fit(); pl.fit(); });
+
+    requestAnimationFrame(frame);
+  }
+
+  window.__zc = { pb: pb, lv: lv, setMode: setMode };   // Debug hook.
+  init();
+})();
+</script>
+</body>
+</html>

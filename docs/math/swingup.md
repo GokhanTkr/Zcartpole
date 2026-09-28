@@ -1,0 +1,9 @@
+# Swing-up optimization
+
+The optimizer works in continuous angles, with phase state $[x,v,\theta_1,\omega_1,\ldots]$ and ideal cart force as the control. It discretizes a finite time horizon into `plan_nodes` intervals and applies Hermite–Simpson direct collocation. It enforces initial conditions, sampled dynamics, sampled cart bounds $|x|\leq x_{\max}-\text{cart_margin}$, force bounds, and a terminal upright pose with small terminal motion. The cost is the configured control and trajectory objective in the solver; `plan.J` is useful for comparing valid candidates of the same problem, not as a hardware energy rating.
+
+Each integer `seed` builds a different angle-path initial guess. The terminal winding number is **not fixed** by that seed: an optimized link can end at any integer multiple of $2\pi$ consistent with upright. CasADi/IPOPT solves a local nonlinear program for each seed. `plan.attempts` includes solver convergence and separate numerical validity, with cost, terminal error, peak cart travel, and peak force when available. The cheapest valid attempt is selected. `planning_failed` means none passed; it does not prove physical infeasibility.
+
+The optimization assumes ideal horizontal force and samples constraints at its collocation nodes. It does not embed the command-to-force transfer function, delay, command clipping, or a guarantee between sampled nodes. The JSON runner tracks the plan with TVLQR and **then** simulates the configured actuator. Compare `plan.csv`, `trajectory.csv`, `summary.plan`, and `summary.catch`. A valid plan can miss the catch or cross the rail in that second stage.
+
+Solve time can rise sharply with the number of links, nodes, seeds, and initial conditions. Change one parameter at a time and record the attempt diagnostics. See [model and control workflow](../engineering.md).

@@ -1,0 +1,50 @@
+site_name: zcartpole
+site_description: Cart and serial pendulum simulation and control
+docs_dir: docs
+
+theme:
+  name: material
+  language: en
+  font: false
+  features:
+    - navigation.sections
+    - navigation.top
+    - toc.follow
+    - content.code.copy
+
+nav:
+  - Home: index.md
+  - Getting started: getting-started.md
+  - Configuration: configuration.md
+  - Actuators: actuators.md
+  - Model and control workflow: engineering.md
+  - Outputs: results.md
+  - Validation: validation.md
+  - Code examples: examples.md
+  - Python API: api.md
+  - Math:
+      - Angle representation: math/representation.md
+      - Dynamics: math/dynamics.md
+      - Integration: math/integration.md
+      - LQR: math/lqr.md
+      - Swing-up: math/swingup.md
+      - Actuation: math/actuation.md
+  - Experiments: experiments.md
+  - Current-loop data: real_current_data.md
+  - Third-party data license: data-license.md
+  - Scope: scope.md
+  - Release guide: publishing.md
+
+markdown_extensions:
+  - admonition
+  - attr_list
+  - tables
+  - toc:
+      permalink: true
+  - pymdownx.arithmatex:
+      generic: true
+  - pymdownx.superfences
+
+extra_javascript:
+  - javascripts/mathjax.js
+  - https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js

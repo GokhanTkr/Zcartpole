@@ -1,0 +1,43 @@
+[build-system]
+requires = ["setuptools>=77.0.3", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "zcartpole"
+version = "0.16.0"
+description = "Cart and serial pendulum simulation with actuator transfer functions and TVLQR"
+readme = "README.md"
+requires-python = ">=3.9"
+license = "MIT"
+license-files = ["LICENSE"]
+keywords = ["cartpole", "pendulum", "control", "lqr", "trajectory-optimization"]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Operating System :: OS Independent",
+    "Topic :: Scientific/Engineering",
+]
+
+# CasADi is loaded only when swing-up optimization is called.
+dependencies = [
+    "numpy>=1.24",
+    "scipy>=1.10",
+]
+
+[project.scripts]
+zcartpole-run = "zcartpole.__main__:main"
+zcartpole-fit-actuator = "zcartpole.identification:main"
+zcartpole-validate-actuator = "zcartpole.validation:main"
+zcartpole-identify-current = "zcartpole.current_identification:main"
+
+[project.optional-dependencies]
+opt = ["casadi>=3.6"]
+speed = ["numba>=0.58"]
+viz = ["matplotlib>=3.7", "pillow>=10"]
+dev = ["pytest>=7", "casadi>=3.6", "matplotlib>=3.7"]
+docs = ["mkdocs>=1.5,<2", "mkdocs-material>=9.5"]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

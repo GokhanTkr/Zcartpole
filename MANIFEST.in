@@ -1,0 +1,10 @@
+include README.md LICENSE DATA_LICENSE.md mkdocs.yml
+recursive-include docs *.md *.js *.html *.json
+recursive-include examples *.py *.json *.csv
+recursive-include experiments *.py *.json
+recursive-exclude examples/real_data *
+recursive-exclude examples/generated *
+recursive-exclude examples/rigid_generated *
+recursive-exclude tests *
+prune site
+prune dist
