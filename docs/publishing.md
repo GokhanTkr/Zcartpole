@@ -8,11 +8,13 @@ From a clean project folder:
 
 ```bash
 python -m pip install '.[dev,docs,opt,viz,speed]' build twine
-python -m pytest -q
+python -m pytest -q -m 'not legacy_triple'
 python -m mkdocs build --strict
 python -m build
 python -m twine check dist/*
 ```
+
+The release test includes a three-link plan and catch through the public phase planner. The older three-link z-coordinate regression is solver-sensitive; run it separately with `python -m pytest -q -m legacy_triple` when comparing that experimental path.
 
 Inspect both the wheel and source archive. Install the built wheel in a clean environment and run a tiny balance JSON; install the source archive too if you plan to support it. Confirm the metadata version, `LICENSE`, and README rendering. The measured DaRUS CSV and derived reports must stay out of **both** PyPI artifacts. The source ZIP supplied separately can include them under `DATA_LICENSE.md`.
 

@@ -22,6 +22,18 @@ def test_phase_plan_exposes_trackable_z_trajectory():
     assert np.isfinite(plan.tracker(model).control(0.0, model.top_state()))
 
 
+def test_triple_phase_plan_and_catch():
+    pytest.importorskip('casadi')
+    model = ZNCartPole(m=(0.1,) * 3, l=(0.4,) * 3, u_max=80.0)
+    angles = (np.pi + .05, np.pi + .03, np.pi + .02)
+    plan = plan_swingup(model, T=6, N=100, x_max=.5, th0=angles)
+    assert plan.success, plan.attempts
+    assert np.max(np.abs(plan.X[0])) <= plan.x_max + 1e-5
+    assert np.max(np.abs(plan.U)) <= model.u_max + 1e-5
+    sol = plan.simulate_catch(model, t_extra=3, dt=.002)
+    assert plan.evaluate_catch(model, sol).success
+
+
 def test_solver_failure_records_attempts():
     pytest.importorskip('casadi')
     model = ZNCartPole(m=(0.1,), l=(0.4,), u_max=80.0)

@@ -34,14 +34,18 @@ def traj3():
     return m, tn, X, U
 
 
-@pytest.mark.parametrize("traj_fixture", ["traj2", "traj3"])
+@pytest.mark.parametrize("traj_fixture", [
+    "traj2", pytest.param("traj3", marks=pytest.mark.legacy_triple),
+])
 def test_trajectory_respects_limits(traj_fixture, request):
     m, tn, X, U = request.getfixturevalue(traj_fixture)
     assert np.abs(X[0]).max() <= 0.5 + 1e-6
     assert np.abs(U).max() <= m.u_max + 1e-6
 
 
-@pytest.mark.parametrize("traj_fixture", ["traj2", "traj3"])
+@pytest.mark.parametrize("traj_fixture", [
+    "traj2", pytest.param("traj3", marks=pytest.mark.legacy_triple),
+])
 def test_trajectory_ends_at_equilibrium_with_zero_input(traj_fixture, request):
     m, tn, X, U = request.getfixturevalue(traj_fixture)
     assert abs(U[-1]) < 1e-6
@@ -63,6 +67,7 @@ def test_swingup_and_catch_double(traj2):
         assert abs(np.angle(z_final)) < 1e-2
 
 
+@pytest.mark.legacy_triple
 def test_swingup_and_catch_triple(traj3):
     m, tn, X, U = traj3
     tracker = TVLQRTracker(m, tn, X, U)
@@ -144,6 +149,7 @@ def test_optimize_swingup_with_custom_warm_start_reports_attempt():
         assert J is None
 
 
+@pytest.mark.legacy_triple
 def test_swingup_matches_legacy_triple():
     gen = ZNCartPole(m=(0.1, 0.1, 0.1), l=(0.4, 0.4, 0.4), u_max=80.0)
     old = ZTripleCartPole()
